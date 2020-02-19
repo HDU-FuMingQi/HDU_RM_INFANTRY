@@ -1,0 +1,103 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: μVision V5.25.3.0
+Copyright (C) 2018 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: FU fumingqi, FU, LIC=FYKYW-Q21V1-KPEZY-I5I62-9TM58-F53F3
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.18
+Toolchain Path:  D:\Keil5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 1 (build 61)
+Assembler:       Armasm.exe V5.06 update 1 (build 61)
+Linker/Locator:  ArmLink.exe V5.06 update 1 (build 61)
+Library Manager: ArmAr.exe V5.06 update 1 (build 61)
+Hex Converter:   FromElf.exe V5.06 update 1 (build 61)
+CPU DLL:         SARMCM3.DLL V5.18
+Dialog DLL:      DCM.DLL V1.13.6.0
+Target DLL:      Segger\JL2CM3.dll V2.99.18.0
+Dialog DLL:      TCM.DLL V1.14.8.0
+ 
+<h2>Project:</h2>
+C:\Users\fumingqi\Desktop\HDU_RM_ INFANTRY_2020\HDU_RM_ INFANTRY_2020\MDK-ARM\HDU_RM_ INFANTRY_2020.uvprojx
+Project File Date:  02/13/2020
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'D:\Keil5\ARM\ARMCC\Bin'
+Build target 'HDU_RM_ INFANTRY_2020'
+compiling Gimbal_Task.c...
+../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f427xx.h(68): warning:  #47-D: incompatible redefinition of macro "__FPU_PRESENT"
+  #define __FPU_PRESENT             1U       /*!< FPU present                                   */
+../Inc/bsp_dbus.h(187): warning:  #1-D: last line of file ends without a newline
+  //    } keyboard;
+../Inc/shoot_task.h(30): warning:  #1295-D: Deprecated declaration get_signal - give arg types
+  int get_signal();
+../Inc/shoot_task.h(31): warning:  #1295-D: Deprecated declaration shoot_single - give arg types
+  void shoot_single();
+../Inc/shoot_task.h(32): warning:  #1295-D: Deprecated declaration shoot_continuity - give arg types
+  void shoot_continuity();
+../Inc/shoot_task.h(33): warning:  #1295-D: Deprecated declaration shoot_stop - give arg types
+  void shoot_stop();
+../Inc/Hero_shoot_Task.h(20): warning:  #1-D: last line of file ends without a newline
+  //#endif
+..\Task\Gimbal_Task.c(319): warning:  #940-D: missing return statement at end of non-void function "GIMBAL_IfBuffHit"
+  }
+..\Task\Gimbal_Task.c(343): warning:  #9-D: nested comment is not allowed
+             /**?嵌?值?芸????遣欢缘?
+..\Task\Gimbal_Task.c(851): warning:  #177-D: variable "Mouse_Yaw_Stop" was declared but never referenced
+  	static uint32_t Mouse_Yaw_Stop  = 0;//?蟊瓴?动，??????应
+..\Task\Gimbal_Task.c(852): warning:  #177-D: variable "Mouse_Pitch_Stop" was declared but never referenced
+  	static uint32_t Mouse_Pitch_Stop  = 0;//?蟊瓴?动，??????应
+..\Task\Gimbal_Task.c(1267): warning:  #177-D: variable "gb_yaw_gyro" was declared but never referenced
+  	float gb_yaw_gyro = 0;
+..\Task\Gimbal_Task.c(1268): warning:  #177-D: variable "gb_pitch_mech" was declared but never referenced
+  	float gb_pitch_mech = 0;
+..\Task\Gimbal_Task.c(1269): warning:  #177-D: variable "y_mid" was declared but never referenced
+  	static float y_mid = 0;
+..\Task\Gimbal_Task.c(1270): warning:  #177-D: variable "p_mid" was declared but never referenced
+  	static float p_mid = 0;
+..\Task\Gimbal_Task.c(1272): warning:  #177-D: variable "yaw_buff_angle_raw" was declared but never referenced
+  	static float yaw_buff_angle_raw, pitch_buff_angle_raw;//卡?????瞬ń嵌炔?量值
+..\Task\Gimbal_Task.c(1272): warning:  #177-D: variable "pitch_buff_angle_raw" was declared but never referenced
+  	static float yaw_buff_angle_raw, pitch_buff_angle_raw;//卡?????瞬ń嵌炔?量值
+..\Task\Gimbal_Task.c(1275): warning:  #177-D: variable "shoot_time" was declared but never referenced
+  	static float shoot_time = 0;
+..\Task\Gimbal_Task.c(1276): warning:  #177-D: variable "lost_time" was declared but never referenced
+  	static float lost_time  = 0;//一??时??没识?鸬剑???
+..\Task\Gimbal_Task.c(1302): warning:  #940-D: missing return statement at end of non-void function "GIMBAL_AUTO_PITCH_SB"
+  }
+..\Task\Gimbal_Task.c(14): warning:  #177-D: variable "nothing" was declared but never referenced
+  const static fp32 nothing[3]={0,0,0};
+..\Task\Gimbal_Task.c: 21 warnings, 0 errors
+linking...
+Program Size: Code=54168 RO-data=4456 RW-data=860 ZI-data=25956  
+FromELF: creating hex file...
+"HDU_RM_ INFANTRY_2020\HDU_RM_ INFANTRY_2020.axf" - 0 Error(s), 21 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.4.5.0.pack
+                ARM.CMSIS.4.5.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 4.3.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.13.0.pack
+                Keil.STM32F4xx_DFP.2.13.0
+                STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_HDU_RM__INFANTRY_2020
+  D:\Keil5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include
+  D:\Keil5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:4.3.0
+Build Time Elapsed:  00:00:03
+</pre>
+</body>
+</html>

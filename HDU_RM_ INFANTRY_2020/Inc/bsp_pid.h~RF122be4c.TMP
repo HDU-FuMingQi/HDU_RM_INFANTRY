@@ -1,0 +1,31 @@
+#ifndef __bsp_pid
+#define __bsp_pid
+
+#include "stm32f4xx_hal.h"
+#include "main.h"
+#include "myType.h"
+#include "Motor_Task.h"
+
+
+
+
+
+typedef enum
+{
+    PID_POSITION = 0,//位置式PID
+    PID_DELTA, //增量式PID
+}PID_MODE;
+
+
+
+
+
+
+
+typedef float fp32;
+typedef double fp64;
+extern void PID_Init(PidTypeDef *pid, uint8_t mode, const fp32 PID[3], fp32 max_out, fp32 max_iout);
+extern fp32 PID_Calc(PidTypeDef *pid, const fp32 ref, const fp32 set);
+extern void PID_clear(PidTypeDef *pid);
+//fp32 PID_Calc_Angle(PidTypeDef *pid, fp32 ref, fp32 set);
+#endif

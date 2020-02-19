@@ -1,0 +1,15 @@
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/timers.c
+hdu_rm_ infantry_2020\timers.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+hdu_rm_ infantry_2020\timers.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
+hdu_rm_ infantry_2020\timers.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+hdu_rm_ infantry_2020\timers.o: ../Inc/FreeRTOSConfig.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
+hdu_rm_ infantry_2020\timers.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h

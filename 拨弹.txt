@@ -1,0 +1,282 @@
+步兵拨弹系统
+资源--三个电机 
+摩擦轮电机--rm snail 2305--pwm控制
+弹丸补给电机--rm 2006--can控制
+
+实现功能：连发，单发--遥控器控制
+
+连发：三个电机持续工作
+
+两个pwm波控制的电机持续工作，拨弹电机同样持续工作
+
+遥控器从上到下 ：sw示数是1 3 2 
+
+需要用到定时器产生pwm波
+pwm波的频率不能超过500hz，建议50hz
+
+限位信号： 单发状态 弹丸压到限位信号开关 get_signal,此时控制电机转过一定角度，
+将弹丸挤出直到下一次弹丸压上限位开关。按下是高电平
+一次置1，一次工作
+
+单发代码思路（待测试）
+void Set_Ammunition_Mode(void)
+{
+	switch (rc.sw2)
+	{
+	case 1:
+		ammunition_mode = single;
+		break;
+	case 2:
+		ammunition_mode = continuity;
+		break;
+	default:
+		ammunition_mode = stop;
+		break;
+	}
+}
+
+int get_signal()
+{
+		return HAL_GPIO_ReadPin(key_signal_GPIO_Port,key_signal_Pin);
+}
+
+void Moto_Speed_Set()
+{
+	switch (ammunition_mode)
+	{
+		case single :
+			if(shoot_state == unstart)
+			{
+			shoot_state = start;
+			shoot_single();
+			}
+			break;
+		case continuity:
+			shoot_continuity();
+		  break;
+		default:
+			shoot_stop();
+		  shoot_state = unstart;
+			break;
+	}
+	
+}
+
+void shoot_single()
+{
+	PWM_Set_Shootspeed(&htim2, TIM_CHANNEL_1,0.06);
+	PWM_Set_Shootspeed(&htim2, TIM_CHANNEL_2,0.06);
+	
+	  int ammunition_flag= unstart;
+		while(shoot_state != finish && rc.sw2 == 1)
+		{
+		
+			if (get_signal() && ammunition_flag == finish) 
+			{
+			shoot_state = finish;
+			Ammunition_Motor.motor_value->target_speed_rpm = 0;
+			PID_Calc(&Ammunition_Motor.Motor_PID_Speed, Ammunition_Motor.motor_value->speed_rpm,
+				 Ammunition_Motor.motor_value->target_speed_rpm);
+	    set_moto1234_current(&hcan2, Ammunition_Motor.Motor_PID_Speed.out, 0, 0, 0);
+
+			}
+			else 
+			{
+				if(get_signal())
+				{
+					ammunition_flag += 1; 
+				}
+			HAL_Delay(10);
+			Ammunition_Motor.motor_value->target_speed_rpm = -500;
+			PID_Calc(&Ammunition_Motor.Motor_PID_Speed, Ammunition_Motor.motor_value->speed_rpm,
+				 Ammunition_Motor.motor_value->target_speed_rpm);
+	    set_moto1234_current(&hcan2, Ammunition_Motor.Motor_PID_Speed.out, 0, 0, 0);
+				
+				
+			}
+		}
+
+	
+}
+
+——————————————————————————————————————————————————————————————————————————————
+
+英雄车——发射机构——实现连发
+
+控制电机  两个3508电机用于发射 
+拨弹电机 一个6020电机用于拨弹
+都是使用can通信
+使用can2控制发送速度
+
+pid计算+set发送
+
+set_moto1234_current()用于发送标识符为0x200的电机的信号
+set_moto5678_current()用于发送标识符为0x1FF的电机的信号
+set_moto91011_current()用于发送标识符为0x2FF的电机的信号
+
+1.初始化电机，获得速度等信息
+
+2.等待信号置位
+
+均使用标识符为0x1FF的发送函数，两个摩擦轮3508的id：1 2；  拨弹电机的6020 id 5，对应软件上是9；
+通过can2来发送控制信号
+
+代码如下：
+
+宏定义目标速度：
+#define hero_fire_l -15000;
+#define hero_fire_r  15000;
+#define hero_fire_rpm 10;
+
+定义电机类型：
+Motortype hero_Fire_Motor;
+Motortype hero_friction_Motor_l;
+Motortype hero_friction_Motor_r;
+
+
+PID参数初始化，均使用速度环控制：
+
+//英雄车拨弹电机的pid初始化
+const static fp32 hero_Fire_Motor_Position_pid[3] = {0, 0, 0};
+const static fp32 hero_Fire_Motor_Speed_pid[3] = {120, 20, 8};
+
+//英雄车左侧摩擦轮电机的pid初始化
+const static fp32 hero_friction_Motor_l_Speed_pid[3] = {100, 10, 0};
+const static fp32 hero_friction_Motor_l_Position_pid[3] = {0, 0, 0};
+
+//英雄车右侧摩擦轮电机的pid初始化
+const static fp32 hero_friction_Motor_r_Speed_pid[3] = {100, 10, 0};
+const static fp32 hero_friction_Motor_r_Position_pid[3] = {0, 0, 0};
+
+电机初始化：
+Motor_Init2(&hero_Fire_Motor, 9, hero_Fire_Motor_Position_pid, 2000, 500,hero_Fire_Motor_Speed_pid, 30000, 10000);
+Motor_Init2(&hero_friction_Motor_l, 1, hero_friction_Motor_l_Position_pid, 2000, 500, hero_friction_Motor_l_Speed_pid, 20000, 10000);
+Motor_Init2(&hero_friction_Motor_r, 2, hero_friction_Motor_r_Position_pid, 2000, 500, hero_friction_Motor_r_Speed_pid, 20000, 10000);
+
+未在英雄车上实现单发，单发模式即停止模式
+
+
+
+void hero_shoot_fun(void const * argument)
+{
+
+	portTickType currentTime;
+	//hero shoot motor initial
+	Motor_Init2(&hero_Fire_Motor, 9, hero_Fire_Motor_Position_pid, 2000, 500,hero_Fire_Motor_Speed_pid, 30000, 10000);
+	Motor_Init2(&hero_friction_Motor_l, 1, hero_friction_Motor_l_Position_pid, 2000, 500, hero_friction_Motor_l_Speed_pid, 20000, 10000);
+	Motor_Init2(&hero_friction_Motor_r, 2, hero_friction_Motor_r_Position_pid, 2000, 500, hero_friction_Motor_r_Speed_pid, 20000, 10000);
+
+  for(;;)
+  {
+    currentTime = xTaskGetTickCount();
+
+   	hero_Set_Fire_Mode();
+		hero_Moto_Speed_Set();
+
+		vTaskDelayUntil(&currentTime, TIME_STAMP_2MS); //¾ø¶ÔÑÓÊ±
+  }
+  /* USER CODE END hero_shoot_fun */
+}
+
+
+
+
+函数：
+
+模式选择：
+void hero_Set_Fire_Mode(void)
+{
+	switch (rc.sw2)
+	{
+	case 1:
+		fire_mode = single;
+		break;
+	case 2:
+		fire_mode = continuity;
+		break;
+	default:
+		fire_mode = stop;
+		break;
+	}
+}
+
+电机的速度设置：
+void hero_Moto_Speed_Set()
+{
+	switch (fire_mode)
+	{
+		case stop :
+			hero_shoot_stop();
+		  break;
+		case single :
+			hero_shoot_stop();
+			break;
+		case continuity:
+			hero_shoot_continuity();
+		  break;
+		default:
+			hero_shoot_stop();
+			break;
+	}
+	
+}
+
+电机停止时的控制函数：
+void hero_shoot_stop()
+{
+	hero_Fire_Motor.motor_value->target_speed_rpm = 0;
+	hero_friction_Motor_l.motor_value->target_speed_rpm = 0;
+	hero_friction_Motor_r.motor_value->target_speed_rpm = 0;
+	
+	PID_Calc(&hero_Fire_Motor.Motor_PID_Speed, hero_Fire_Motor.motor_value->speed_rpm,
+				 hero_Fire_Motor.motor_value->target_speed_rpm);
+	PID_Calc(&hero_friction_Motor_l.Motor_PID_Speed, hero_friction_Motor_l.motor_value->speed_rpm,
+				 hero_friction_Motor_l.motor_value->target_speed_rpm);
+	PID_Calc(&hero_friction_Motor_r.Motor_PID_Speed, hero_friction_Motor_r.motor_value->speed_rpm,
+				 hero_friction_Motor_r.motor_value->target_speed_rpm);
+	
+	set_moto91011_current(&hcan2, hero_Fire_Motor.Motor_PID_Speed.out, 0, 0);
+	
+	if(hero_friction_Motor_l.motor_value->speed_rpm<100)
+		 set_moto1234_current(&hcan2, 0, 0, 0, 0);
+	else
+		set_moto1234_current(&hcan2, hero_friction_Motor_l.Motor_PID_Speed.out, hero_friction_Motor_r.Motor_PID_Speed.out, 0, 0);
+}
+
+
+电机连发时的速度函数：
+void hero_shoot_continuity()
+{
+	hero_Fire_Motor.motor_value->target_speed_rpm = hero_fire_rpm;
+	hero_friction_Motor_l.motor_value->target_speed_rpm = hero_fire_l;
+	hero_friction_Motor_r.motor_value->target_speed_rpm = hero_fire_r ;
+	
+	PID_Calc(&hero_Fire_Motor.Motor_PID_Speed, hero_Fire_Motor.motor_value->speed_rpm,
+				 hero_Fire_Motor.motor_value->target_speed_rpm);
+	PID_Calc(&hero_friction_Motor_l.Motor_PID_Speed, hero_friction_Motor_l.motor_value->speed_rpm,
+				 hero_friction_Motor_l.motor_value->target_speed_rpm);
+	PID_Calc(&hero_friction_Motor_r.Motor_PID_Speed, hero_friction_Motor_r.motor_value->speed_rpm,
+				 hero_friction_Motor_r.motor_value->target_speed_rpm);
+	
+	set_moto91011_current(&hcan2, hero_Fire_Motor.Motor_PID_Speed.out, 0, 0);
+	set_moto1234_current(&hcan2, hero_friction_Motor_l.Motor_PID_Speed.out, hero_friction_Motor_r.Motor_PID_Speed.out, 0, 0);
+	 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

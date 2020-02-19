@@ -1,0 +1,14 @@
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/croutine.c
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+hdu_rm_ infantry_2020\croutine.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
+hdu_rm_ infantry_2020\croutine.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+hdu_rm_ infantry_2020\croutine.o: ../Inc/FreeRTOSConfig.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/croutine.h
+hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
