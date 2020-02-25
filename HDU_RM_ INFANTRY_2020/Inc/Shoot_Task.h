@@ -49,6 +49,9 @@ void SHOOT_BUFF_Ctrl_Gimbal(void);
 //视觉
 bool GIMBAL_IfManulHit(void);//手动打符
 
+/******射频热量限制******/
+bool Revolver_Heat_Limit(void);
+
 
 #endif
 

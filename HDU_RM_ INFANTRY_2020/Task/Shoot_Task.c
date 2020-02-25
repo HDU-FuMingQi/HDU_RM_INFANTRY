@@ -34,6 +34,8 @@ void ShootFun(void const * argument)
 			}
 		}
 		
+		//热量限制
+		
 		vTaskDelayUntil(&currentTime, TIME_STAMP_2MS); //绝对延时
 	}
 }
@@ -520,6 +522,19 @@ void SHOOT_BUFF_Ctrl_Gimbal(void)
   * @attention 
   */
 bool GIMBAL_IfManulHit(void)
+{
+}
+
+/*********************射频热量限制****************************/
+
+/**
+  * @brief  枪管热量限制
+  * @param  void
+  * @retval 热量是否超限
+  * @attention  超限要重置一下拨盘,根据剩余可发弹量来做闭环
+  *             如果做双枪管则此函数不适用
+  */
+bool Revolver_Heat_Limit(void)
 {
 }
 
