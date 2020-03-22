@@ -1,17 +1,73 @@
+/*********************************/
+
+//本文件中对各个模式的最大输出量均保留了深大代码的
+//HDU的写在mysystem.h里
+
+//而且小陀螺和底盘跟随云台目前好像没有键可用
+
+/********************************/
 #include "chassis_task.h"
 #include "judge.h"
 
 eChassisAction actChassis=CHASSIS_NORMAL;   //默认底盘不跟随云台行走
-eChassisCtrlMode  modeChassis;
+eChassisCtrlMode  modeChassis=CHASSIS_GYRO_MODE; //默认为陀螺仪模式行走
+
+extKalman_t Chassis_Error_Kalman;//定义一个kalman指针
 PidTypeDef Chassis_Follow_PID;
 Chassis_Speed absolute_chassis_speed;
 int16_t chassis_motor[4];		//四个轮子目标转速
+
 const static fp32 nothing[3]={0,0,0};
 const static fp32 motorid1_speed_pid[3] ={22,0,12};
 const static fp32 motorid2_speed_pid[3] ={22,0, 12};
 const static fp32 motorid3_speed_pid[3] ={22,0, 12};
 const static fp32 motorid4_speed_pid[3] ={22,0, 12};
 const static fp32 Chassis_Follow_pid[3]={0.00001,0,0.00012};
+
+
+/**
+  * @brief  底盘参数初始化
+  * @param  void
+  * @retval void
+  * @attention 
+  */
+//底盘电流限幅
+#define iTermChassis_Max             3000     //微分限幅
+
+	#define		Omni_Speed_Max            9000//7600     //底盘水平移动速度限幅,防止键盘模式下速度超过这个值
+	#define		STANDARD_MAX_NORMAL       9000//7600     //平地开车最快速度，防止摇杆比例*660超过这个值
+	#define		REVOLVE_MAX_NORMAL        9000//7600     //平地扭头最快速度
+	#define     REVOLVE_KD                (235.f)
+	#define     REVOLVE_ANGLE             35
+
+//陀螺仪模式下底盘比例系数,控制键盘斜坡变化率
+float kKey_Gyro_Chassis_Standard, kKey_Gyro_Chassis_Revolve;//平移，旋转
+
+//机械模式下底盘比例系数,控制键盘斜坡变化率
+float kKey_Mech_Chassis_Standard, kKey_Mech_Chassis_Revolve;//平移，旋转
+
+/**************限幅**************/
+#define   LIMIT_CHASSIS_MAX         9000     //功率限制情况下底盘单个电机最大输出
+
+float Chassis_Final_Output_Max = LIMIT_CHASSIS_MAX;//限制PID运算最终输出值,底盘功率限制,根据电机转速实时变化
+float Chassis_Standard_Move_Max;//底盘前后左右平移限速
+float Chassis_Revolve_Move_Max;//底盘左右旋转限速,根据不同运动模式实时更改,所以不能用宏定义
+
+float Chassis_Limit_Output_Max=LIMIT_CHASSIS_MAX;//底盘功率限幅
+
+void CHASSIS_InitArgument(void)
+{
+	kKey_Mech_Chassis_Revolve = 40;//键盘机械模式下扭头速度响应快慢,别太大,不然扭头太快
+	kKey_Gyro_Chassis_Revolve = -10;//-8.1;//注意正负,键盘陀螺仪模式下底盘跟随云台转动的速度,别给太大,否则震荡会很严重
+	
+	Chassis_Standard_Move_Max  = Omni_Speed_Max;//6800;//9000;//摇杆水平移动限幅
+	Chassis_Revolve_Move_Max   = Omni_Speed_Max;//6800;//7000;//摇杆左右扭头限幅,可以稍微大一点,否则云台扭太快会导致云台撞到限位,太大又会导致到目标位置后晃动
+	
+	KalmanCreate(&Chassis_Error_Kalman, 1, 0);      //将在闭环里使用，现在还不太清楚
+
+}
+
+
 void ChassisFun(void const * argument)
 {
 	portTickType currentTime;
@@ -80,7 +136,7 @@ void LimitChassisMotorCurrent(void)
 					break;
 			}
 			break;
-		case CHASSIS_FOLLOW_GIMBAL:			//底盘跟随云台
+
 		case CHASSIS_PISA:				//45°模式，与底盘跟随云台限流相同
 			switch(EnvironmentMode)
 			{
@@ -92,18 +148,62 @@ void LimitChassisMotorCurrent(void)
 					break;
 			}
 			break;
-		case CHASSIS_GYROSCOPE:			//小陀螺模式
+
 		case CHASSIS_CORGI:				//扭屁股模式，跟小陀螺限流相同
-		switch(EnvironmentMode)
-		{
-			case NOMAL:			//普通地形
-					SetChassisMotorMaxCurrent(NOMAL_GYRO_CHASSIS_MAX1,NOMAL_GYRO_CHASSIS_MAX2,NOMAL_GYRO_CHASSIS_MAX3,NOMAL_GYRO_CHASSIS_MAX4);
+			switch(EnvironmentMode)
+			{
+				case NOMAL:			//普通地形
+						SetChassisMotorMaxCurrent(NOMAL_GYRO_CHASSIS_MAX1,NOMAL_GYRO_CHASSIS_MAX2,NOMAL_GYRO_CHASSIS_MAX3,NOMAL_GYRO_CHASSIS_MAX4);
+						break;
+				case CLIMBING:		//爬坡地形
+					SetChassisMotorMaxCurrent(CLIMBING_GYRO_CHASSIS_MAX1,CLIMBING_GYRO_CHASSIS_MAX2,CLIMBING_GYRO_CHASSIS_MAX3,CLIMBING_GYRO_CHASSIS_MAX4);
 					break;
-			case CLIMBING:		//爬坡地形
-				SetChassisMotorMaxCurrent(CLIMBING_GYRO_CHASSIS_MAX1,CLIMBING_GYRO_CHASSIS_MAX2,CLIMBING_GYRO_CHASSIS_MAX3,CLIMBING_GYRO_CHASSIS_MAX4);
-				break;
-		}
+			}
 			break;
+			
+		case  CHASSIS_SZUPUP:  //手动爬坡模式
+			SetChassisMotorMaxCurrent(CLIMBING_CHASSIS_SZUPUP_MAX1,CLIMBING_CHASSIS_SZUPUP_MAX2,CLIMBING_CHASSIS_SZUPUP_MAX3,CLIMBING_CHASSIS_SZUPUP_MAX4);
+			break;
+		
+		case  CHASSIS_MISS:    //自动闪避模式
+			switch(EnvironmentMode)
+			{
+				case NOMAL:			//普通地形
+						SetChassisMotorMaxCurrent(NOMAL_CHASSIS_MISS_MAX1,NOMAL_CHASSIS_MISS_MAX2,NOMAL_CHASSIS_MISS_MAX3,NOMAL_CHASSIS_MISS_MAX4);
+						break;
+				case CLIMBING:		//爬坡地形
+					SetChassisMotorMaxCurrent(CLIMBING_CHASSIS_MISS_MAX1,CLIMBING_CHASSIS_MISS_MAX2,CLIMBING_CHASSIS_MISS_MAX3,CLIMBING_CHASSIS_MISS_MAX4);
+					break;
+			}
+			break;
+			
+		case CHASSIS_GYROSCOPE:			//小陀螺模式
+			switch(EnvironmentMode)
+			{
+				case NOMAL:			//普通地形
+						SetChassisMotorMaxCurrent(NOMAL_CHASSIS_GYROSCOPE_MAX1,NOMAL_CHASSIS_GYROSCOPE_MAX2,NOMAL_CHASSIS_GYROSCOPE_MAX3,NOMAL_CHASSIS_GYROSCOPE_MAX4);
+						break;
+				case CLIMBING:		//爬坡地形
+					SetChassisMotorMaxCurrent(CLIMBING_CHASSIS_GYROSCOPE_MAX1,CLIMBING_CHASSIS_GYROSCOPE_MAX2,CLIMBING_CHASSIS_GYROSCOPE_MAX3,CLIMBING_CHASSIS_GYROSCOPE_MAX4);
+					break;
+			}
+			break;
+			
+		case CHASSIS_FOLLOW_GIMBAL:			//底盘跟随云台
+			switch(EnvironmentMode)
+			{
+				case NOMAL:			//普通地形
+						SetChassisMotorMaxCurrent(NOMAL_CHASSIS_FOLLOW_GIMBAL_MAX1,NOMAL_CHASSIS_FOLLOW_GIMBAL_MAX2,NOMAL_CHASSIS_FOLLOW_GIMBAL_MAX3,NOMAL_CHASSIS_FOLLOW_GIMBAL_MAX4);
+						break;
+				case CLIMBING:		//爬坡地形
+					SetChassisMotorMaxCurrent(CLIMBING_CHASSIS_FOLLOW_GIMBAL_MAX1,CLIMBING_CHASSIS_FOLLOW_GIMBAL_MAX2,CLIMBING_CHASSIS_FOLLOW_GIMBAL_MAX3,CLIMBING_CHASSIS_FOLLOW_GIMBAL_MAX4);
+					break;
+			}
+			break;
+		
+		default:
+			break;
+			
 	}
 }
 /**
@@ -244,11 +344,51 @@ void Chassis_Power_Limit(void)
   * @retval void
   * @attention 
   */
+
+#define Omni_SupCap_Max				 10000		//电容放电情况下最大速度
+#define 	Omni_Speed_Max            9000     //底盘水平移动速度限幅,防止键盘模式下速度超过这个值
+
+
 void KeyboardControlChassis(void)
 {
+	float speed_max;
+	if(Cap_Out_Can_Open() == TRUE)//电容放电
+	{
+		speed_max = Omni_SupCap_Max;
+	}
+	else
+	{
+		speed_max = Omni_Speed_Max;
+	}
+	
 	CHAS_Key_Ctrl();
 	Absolute_Cal(&absolute_chassis_speed,(float)(Gimbal_MotorYaw.motor_value->angle-GIMBAL_YAW_ENCODER_MIDDLE1)*0.043945f);//计算各个电机的目标速度
 	Mecanum_Set_Motor_Speed(chassis_motor,Chassis_Motor1.motor_value);//设置各个电机的目标速度
+	
+	/************************************底盘电机速度环计算*********************************************/
+			PID_Calc(&Chassis_Motor1.Motor_PID_Speed,Chassis_Motor1.motor_value->speed_rpm,
+				Chassis_Motor1.motor_value->target_speed_rpm);
+			PID_Calc(&Chassis_Motor2.Motor_PID_Speed,Chassis_Motor2.motor_value->speed_rpm,
+							Chassis_Motor2.motor_value->target_speed_rpm);
+			PID_Calc(&Chassis_Motor3.Motor_PID_Speed,Chassis_Motor3.motor_value->speed_rpm,
+							Chassis_Motor3.motor_value->target_speed_rpm);
+			PID_Calc(&Chassis_Motor4.Motor_PID_Speed,Chassis_Motor4.motor_value->speed_rpm,
+							Chassis_Motor4.motor_value->target_speed_rpm);
+	/************************************将电流参数发送给电机*********************************************/
+		Chassis_Motor1.Motor_PID_Speed.out = constrain_float(Chassis_Motor1.Motor_PID_Speed.out ,-speed_max, speed_max);
+		Chassis_Motor2.Motor_PID_Speed.out = constrain_float(Chassis_Motor2.Motor_PID_Speed.out ,-speed_max, speed_max);
+		Chassis_Motor3.Motor_PID_Speed.out = constrain_float(Chassis_Motor3.Motor_PID_Speed.out ,-speed_max, speed_max);
+		Chassis_Motor4.Motor_PID_Speed.out = constrain_float(Chassis_Motor4.Motor_PID_Speed.out ,-speed_max, speed_max);
+		if(actChassis == CHASSIS_SZUPUP)//爬坡前轮会打滑，所以限得比后轮要小,,此处怎么限制实验再说
+		{
+			Chassis_Motor1.Motor_PID_Speed.out = constrain_float(Chassis_Motor1.Motor_PID_Speed.out ,-speed_max, speed_max);
+			Chassis_Motor2.Motor_PID_Speed.out = constrain_float(Chassis_Motor2.Motor_PID_Speed.out ,-speed_max, speed_max);
+			Chassis_Motor3.Motor_PID_Speed.out = constrain_float(Chassis_Motor3.Motor_PID_Speed.out ,-Omni_Speed_Max, Omni_Speed_Max);
+			Chassis_Motor4.Motor_PID_Speed.out = constrain_float(Chassis_Motor4.Motor_PID_Speed.out ,-Omni_Speed_Max, Omni_Speed_Max);
+		}
+		Chassis_Power_Limit();//功率限制,电流重新分配
+		set_moto1234_current(&hcan1,Chassis_Motor1.Motor_PID_Speed.out,Chassis_Motor2.Motor_PID_Speed.out
+									,Chassis_Motor3.Motor_PID_Speed.out,Chassis_Motor4.Motor_PID_Speed.out);
 }
 /**
   * @brief  确定地形和底盘状态
@@ -270,9 +410,13 @@ void GetEnvironmentChassisMode(void)
 			else if(rc.sw1==2)	
 				actChassis=CHASSIS_GYROSCOPE;		//小陀螺模式
 			//选择所处环境
-			
-			
 			break;
+	
+		case KEYBOARD:    //键盘模式
+			/*------------------普通模式,进行模式切换判断-------------------*/	
+			Chassis_NORMAL_Mode_Ctrl();								
+			break;
+		
 		default:
 			break;
 	}
@@ -304,7 +448,7 @@ void Mecanum_Set_Motor_Speed(int16_t*out_speed ,moto_measure_t* Motor )
 	Motor[1].target_speed_rpm=out_speed[1];
 	Motor[2].target_speed_rpm=out_speed[2];
 	Motor[3].target_speed_rpm=out_speed[3];
-
+	
 }
 
 /*
@@ -405,46 +549,6 @@ void CHASSIS_REST(void)
 
  ****************************************************************************************************/
 
-/**
-  * @brief  底盘参数初始化
-  * @param  void
-  * @retval void
-  * @attention 
-  */
-//底盘电流限幅
-#define iTermChassis_Max             3000     //微分限幅
-
-	#define		Omni_Speed_Max            9000//7600     //底盘水平移动速度限幅,防止键盘模式下速度超过这个值
-	#define		STANDARD_MAX_NORMAL       9000//7600     //平地开车最快速度，防止摇杆比例*660超过这个值
-	#define		REVOLVE_MAX_NORMAL        9000//7600     //平地扭头最快速度
-	#define     REVOLVE_KD                (235.f)
-	#define     REVOLVE_ANGLE             35
-
-//陀螺仪模式下底盘比例系数,控制键盘斜坡变化率
-float kKey_Gyro_Chassis_Standard, kKey_Gyro_Chassis_Revolve;//平移，旋转
-
-//机械模式下底盘比例系数,控制键盘斜坡变化率
-float kKey_Mech_Chassis_Standard, kKey_Mech_Chassis_Revolve;//平移，旋转
-
-/**************限幅**************/
-#define   LIMIT_CHASSIS_MAX         9000     //功率限制情况下底盘单个电机最大输出
-
-float Chassis_Final_Output_Max = LIMIT_CHASSIS_MAX;//限制PID运算最终输出值,底盘功率限制,根据电机转速实时变化
-float Chassis_Standard_Move_Max;//底盘前后左右平移限速
-float Chassis_Revolve_Move_Max;//底盘左右旋转限速,根据不同运动模式实时更改,所以不能用宏定义
-
-float Chassis_Limit_Output_Max=LIMIT_CHASSIS_MAX;//底盘功率限幅
-
-void CHASSIS_InitArgument(void)
-{
-	kKey_Mech_Chassis_Revolve = 40;//键盘机械模式下扭头速度响应快慢,别太大,不然扭头太快
-	kKey_Gyro_Chassis_Revolve = -10;//-8.1;//注意正负,键盘陀螺仪模式下底盘跟随云台转动的速度,别给太大,否则震荡会很严重
-	
-	Chassis_Standard_Move_Max  = Omni_Speed_Max;//6800;//9000;//摇杆水平移动限幅
-	Chassis_Revolve_Move_Max   = Omni_Speed_Max;//6800;//7000;//摇杆左右扭头限幅,可以稍微大一点,否则云台扭太快会导致云台撞到限位,太大又会导致到目标位置后晃动
-	
-}
-
 /***********底盘各类模式的一些辅助定义*************/
 /**
   * @brief  键盘控制底盘移动
@@ -494,11 +598,6 @@ void CHAS_Key_Ctrl(void)
 	
 	switch (actChassis)      //SB keil 有警告,键盘模式选择，测试限死是普通模式
 	{
-		/*------------------普通模式,进行模式切换判断-------------------*/	
-		case CHASSIS_NORMAL:		
-			Chassis_NORMAL_Mode_Ctrl();						
-		break;
-		
 		/*------------------扭屁股模式-------------------*/			
 		case CHASSIS_CORGI:	
 			if(!IF_KEY_PRESSED_F)//F松开
@@ -578,9 +677,9 @@ void CHAS_Key_Ctrl(void)
 		break;
 			
 //		/*-------------自动闪避模式-------------*/
-//		case CHASSIS_MISS:
-//			CHASSIS_MISS_Mode_Ctrl();
-//		break;
+		case CHASSIS_MISS:
+			CHASSIS_MISS_Mode_Ctrl();
+		break;
 		
 //		/*-------------45°对敌模式-------------*/
 		case CHASSIS_PISA:
@@ -684,7 +783,7 @@ float Slope_Chassis_Revolve_Move;
   */
 void Chassis_Keyboard_Move_Calculate( int16_t sMoveMax, int16_t sMoveRamp )
 {
-		static portTickType  ulCurrentTime = 0;
+	static portTickType  ulCurrentTime = 0;
 	static uint32_t  ulDelay = 0;
 	float k_rc_z = 1;//根据Z速度调节前后左右平移移速比
 	
@@ -914,10 +1013,10 @@ void Chassis_NORMAL_Mode_Ctrl(void)
 	{
 		actChassis = CHASSIS_SZUPUP;//爬坡模式
 	}
-//	else if(JUDGE_IfArmorHurt() == TRUE && GIMBAL_IfBuffHit() == FALSE)//只要伤害更新且无按键按下,就会进入自动闪避模式
-//	{
-//		actChassis = CHASSIS_MISS;//打符时关闭自动闪避
-//	}
+	else if(JUDGE_IfArmorHurt() == TRUE && GIMBAL_IfBuffHit() == FALSE)//只要伤害更新且无按键按下,就会进入自动闪避模式
+	{
+		actChassis = CHASSIS_MISS;//打符时关闭自动闪避
+	}
 	else if(GIMBAL_IfBuffHit() == TRUE)//打符模式
 	{
 		actChassis = CHASSIS_ROSHAN;
@@ -953,6 +1052,7 @@ void Chassis_NORMAL_Mode_Ctrl(void)
 //			Chassis_Keyboard_Move_Calculate(STANDARD_MAX_NORMAL, TIME_INC_NORMAL);//设置速度最大值与斜坡时间
 //			Chassis_Mouse_Move_Calculate(REVOLVE_MAX_NORMAL);			
 //		}
+		actChassis=CHASSIS_FOLLOW_GIMBAL;
 	}	
 }
 	
@@ -1060,6 +1160,51 @@ void CHASSIS_SZUPUP_Mode_Ctrl(void)
 }
 
 /**
+  * @brief  自动闪避模式
+  * @param  void
+  * @retval void
+  * @attention  
+  */
+
+//自动闪避
+#define   MISS_MAX_TIME    1000    //自动闪避最大归位时间,单位2*ms
+uint32_t  Miss_Mode_Time = 0;//自动闪避已过时长
+
+void CHASSIS_MISS_Mode_Ctrl(void)
+{
+	int16_t  sAngleError   = 0;
+//	sAngleError = GIMBAL_GetOffsetAngle();//计算yaw中心偏离,保证底盘扭屁股的时候也能跟随云台动
+
+	//有按键按下或者长时间没再受到攻击则退出自动闪避,保证操作跟手
+	if( IF_KEY_PRESSED || Miss_Mode_Time > MISS_MAX_TIME )
+	{
+		actChassis = CHASSIS_NORMAL;//底盘切换成正常模式
+		Miss_Mode_Time = 0;
+	}
+	else
+	{
+		modeChassis = CHASSIS_GYRO_MODE;
+		
+		if(JUDGE_IfArmorHurt() == TRUE 	//装甲板数据更新,即受到新的伤害
+			|| IfCorgiChange == FALSE)  //屁股没有扭到旁边
+		{
+			//开启扭屁股一次
+			CHASSIS_CORGI_Mode_Ctrl( REVOLVE_MAX_CORGI, REVOLVE_SLOPE_CORGI);
+			Miss_Mode_Time = 0;
+		}
+		else
+		{
+			Slope_Chassis_Move_Z = 0;//扭屁股实时输出斜坡
+			absolute_chassis_speed.vx = 0;
+			absolute_chassis_speed.vy = 0;
+			absolute_chassis_speed.vw = PID_Calc( &Chassis_Follow_PID,(sAngleError - corgi_angle_target), kKey_Gyro_Chassis_Revolve);
+			Miss_Mode_Time++;
+		}	
+	}
+}
+
+
+/**
   * @brief  45°模式
   * @param  void
   * @retval void
@@ -1101,60 +1246,131 @@ void CHASSIS_PISA_Mode_Ctrl(void)
   */
 void CHASSIS_GYROSCOPE_Mode_Ctrl(int16_t sMoveMax,int16_t sMoveRamp)
 {
-	static portTickType  ulCurrentTime = 0;
-	static uint32_t  ulDelay = 0;
-	float k_rc_z = 1;//根据Z速度调节前后左右平移移速比
+//	static portTickType  ulCurrentTime = 0;
+//	static uint32_t  ulDelay = 0;
+//	float k_rc_z = 1;//根据Z速度调节前后左右平移移速比
 
-	Chassis_Standard_Move_Max = sMoveMax;//调整速度限幅,水平移动
-	timeInc      = sMoveRamp;
-	
-	ulCurrentTime = xTaskGetTickCount();//当前系统时间
-	
-	
-	if (ulCurrentTime >= ulDelay)//每10ms变化一次斜坡量
-	{
-		ulDelay = ulCurrentTime + TIME_STAMP_10MS;		//其他模式不需要进行速度方向突变特殊处理
-		if (IF_KEY_PRESSED_W)
-		{
-			timeXBack = 0;//按下前进则后退斜坡归零,方便下次计算后退斜坡
-		}
+//	Chassis_Standard_Move_Max = sMoveMax;//调整速度限幅,水平移动
+//	timeInc      = sMoveRamp;
+//	
+//	ulCurrentTime = xTaskGetTickCount();//当前系统时间
+//	
+//	
+//	if (ulCurrentTime >= ulDelay)//每10ms变化一次斜坡量
+//	{
+//		ulDelay = ulCurrentTime + TIME_STAMP_10MS;		//其他模式不需要进行速度方向突变特殊处理
+//		if (IF_KEY_PRESSED_W)
+//		{
+//			timeXBack = 0;//按下前进则后退斜坡归零,方便下次计算后退斜坡
+//		}
 
-		if (IF_KEY_PRESSED_S)
-		{
-			timeXFron = 0;//同理
-		}
+//		if (IF_KEY_PRESSED_S)
+//		{
+//			timeXFron = 0;//同理
+//		}
 
-		if (IF_KEY_PRESSED_D)
-		{
-			timeYRigh = 0;
-		}
+//		if (IF_KEY_PRESSED_D)
+//		{
+//			timeYRigh = 0;
+//		}
 
-		if (IF_KEY_PRESSED_A)
-		{
-			timeYLeft = 0;
-		}
-		
-		Slope_Chassis_Move_Fron = (int16_t)( Chassis_Standard_Move_Max * 
-				Chassis_Key_MoveRamp( IF_KEY_PRESSED_W, &timeXFron, timeInc, TIME_DEC_NORMAL ) );
+//		if (IF_KEY_PRESSED_A)
+//		{
+//			timeYLeft = 0;
+//		}
+//		
+//		Slope_Chassis_Move_Fron = (int16_t)( Chassis_Standard_Move_Max * 
+//				Chassis_Key_MoveRamp( IF_KEY_PRESSED_W, &timeXFron, timeInc, TIME_DEC_NORMAL ) );
 
-		Slope_Chassis_Move_Back = (int16_t)( -Chassis_Standard_Move_Max * 
-				Chassis_Key_MoveRamp( IF_KEY_PRESSED_S, &timeXBack, timeInc, TIME_DEC_NORMAL ) );
+//		Slope_Chassis_Move_Back = (int16_t)( -Chassis_Standard_Move_Max * 
+//				Chassis_Key_MoveRamp( IF_KEY_PRESSED_S, &timeXBack, timeInc, TIME_DEC_NORMAL ) );
 
-		Slope_Chassis_Move_Left = (int16_t)( -Chassis_Standard_Move_Max * 
-				Chassis_Key_MoveRamp( IF_KEY_PRESSED_A, &timeYRigh, timeInc, TIME_DEC_NORMAL ) );
+//		Slope_Chassis_Move_Left = (int16_t)( -Chassis_Standard_Move_Max * 
+//				Chassis_Key_MoveRamp( IF_KEY_PRESSED_A, &timeYRigh, timeInc, TIME_DEC_NORMAL ) );
 
-		Slope_Chassis_Move_Righ = (int16_t)( Chassis_Standard_Move_Max * 
-				Chassis_Key_MoveRamp( IF_KEY_PRESSED_D, &timeYLeft, timeInc, TIME_DEC_NORMAL ) );
+//		Slope_Chassis_Move_Righ = (int16_t)( Chassis_Standard_Move_Max * 
+//				Chassis_Key_MoveRamp( IF_KEY_PRESSED_D, &timeYLeft, timeInc, TIME_DEC_NORMAL ) );
 
-		if(actChassis != CHASSIS_CORGI)
-		{
-			absolute_chassis_speed.vx  = (Slope_Chassis_Move_Back + Slope_Chassis_Move_Fron) * k_rc_z;//前后计算
-			absolute_chassis_speed.vy  = (Slope_Chassis_Move_Left + Slope_Chassis_Move_Righ) * k_rc_z;//左右计算
-		}
-	}
-	absolute_chassis_speed.vw=0.006;
+//		if(actChassis != CHASSIS_CORGI)
+//		{
+//			absolute_chassis_speed.vx  = (Slope_Chassis_Move_Back + Slope_Chassis_Move_Fron) * k_rc_z;//前后计算
+//			absolute_chassis_speed.vy  = (Slope_Chassis_Move_Left + Slope_Chassis_Move_Righ) * k_rc_z;//左右计算
+//		}
+//	}
+//	absolute_chassis_speed.vw=0.006;
 }
 
+/**
+  * @brief  获取底盘移动模式
+  * @param  void
+  * @retval TRUE:机械模式    false:陀螺仪模式
+  * @attention  
+  */
+bool CHASSIS_IfActiveMode(void)
+{
+	if (modeChassis == CHASSIS_MECH_MODE)
+	{
+		return TRUE;//机械
+	}
+	else
+	{
+		return FALSE;//陀螺仪
+	}
+}
+
+/**
+  * @brief  底盘是否处于爬坡模式
+  * @param  void
+  * @retval TRUE FALSE
+  * @attention  
+  */
+bool Chassis_IfSZUPUP(void)
+{
+	if(actChassis == CHASSIS_SZUPUP)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+/**
+  * @brief  底盘是否处于扭屁股模式
+  * @param  void
+  * @retval TRUE FALSE
+  * @attention  
+  */
+bool Chassis_IfCORGI(void)
+{
+	if(actChassis == CHASSIS_CORGI)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+/**
+  * @brief  底盘是否处于45°模式
+  * @param  void
+  * @retval TRUE FALSE
+  * @attention  
+  */
+bool Chassis_IfPISA(void)
+{
+	if(actChassis == CHASSIS_PISA)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
 
 
 

@@ -29,22 +29,21 @@ void vision_callback_handler(uint8_t *buff);
 void vision_uart_init(void);
 
 /*****视觉偏差获取******/
-//////////获取yaw误差像素，桥头吊射基地专用////////////////
-void Vision_Base_Yaw_Pixel(float *error);
-///////////////获取yaw误差角度，自瞄专用/////////////////
-void Vision_Error_Angle_Yaw(float *error);
-//////////////获取pitch误差角度，自瞄专用///////////////////
-void Vision_Error_Angle_Pitch(float *error);
+void Vision_Error_Yaw(float *error);      /////获取yaw误差像素(x轴)
+void Vision_Error_Pitch(float *error);     //////获取pitch误差像素(y轴)
+void Vision_Base_Yaw_Pixel(float *error);  ///获取yaw误差像素，桥头吊射基地专用
+void Vision_Error_Angle_Yaw(float *error);  ////获取yaw误差角度，自瞄专用
+void Vision_Error_Angle_Pitch(float *error);  ///获取pitch误差角度，自瞄专用
 
-///////////////获取距离/////////////////////////
-void Vision_Get_Distance(float *distance);
 
+void Vision_Get_Distance(float *distance);   /////获取距离/
+ 
 /********视觉辅助函数*********/
-/////////判断视觉数据更新了吗/////////
-bool Vision_If_Update(void);
+bool Vision_If_Update(void);  ///判断视觉数据更新了吗/
 extern uint8_t Vision_Get_New_Data;
-////////视觉数据更新标志位手动置0//////////
-void Vision_Clean_Update_Flag(void);
+void Vision_Clean_Update_Flag(void);  ///视觉数据更新标志位手动置0//
+bool Vision_If_Armor(void);   //等待下次更新装甲板
+void Vision_Clean_Ammor_Flag(void);  //换装甲标志位手动置0(false)
 
 
 #endif

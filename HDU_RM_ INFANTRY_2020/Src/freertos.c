@@ -56,6 +56,7 @@ osThreadId OutControl_TaskHandle;
 osThreadId IMUTaskHandle;
 osThreadId hero_shootHandle;
 osTimerId Get6020SpeedTimerHandle;
+osTimerId Task_500msTimerHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -71,6 +72,7 @@ void OutControl_Fun(void const * argument);
 void IMUFun(void const * argument);
 void hero_shoot_fun(void const * argument);
 void Get6020SpeedCallback(void const * argument);
+void Task_500ms(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -129,9 +131,14 @@ void MX_FREERTOS_Init(void) {
   osTimerDef(Get6020SpeedTimer, Get6020SpeedCallback);
   Get6020SpeedTimerHandle = osTimerCreate(osTimer(Get6020SpeedTimer), osTimerPeriodic, NULL);
 
+  /* definition and creation of Task_500msTimer */
+  osTimerDef(Task_500msTimer, Task_500ms);
+  Task_500msTimerHandle = osTimerCreate(osTimer(Task_500msTimer), osTimerPeriodic, NULL);
+
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
 	osTimerStart(Get6020SpeedTimerHandle,10);//10毫秒钟启动一次定时
+	osTimerStart(Task_500msTimerHandle,500);//500毫秒钟启动一次定时
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -139,38 +146,31 @@ void MX_FREERTOS_Init(void) {
 /////////////////////////创建开始任务任务函数///////////////////////////	
   /* USER CODE END RTOS_QUEUES */
 
-	////////////////////创建 失联保护 任务，实时任务，/////////////////////////
   /* Create the thread(s) */
   /* definition and creation of ShowRunningTask */
   osThreadDef(ShowRunningTask, ShowRunningFun, osPriorityRealtime, 0, 128);
   ShowRunningTaskHandle = osThreadCreate(osThread(ShowRunningTask), NULL);
 
-  ////////////////////创建 OLED 任务，实时任务，/////////////////////////
   /* definition and creation of ShowOLEDTask */
   osThreadDef(ShowOLEDTask, ShowOLEDFun, osPriorityIdle, 0, 128);
   ShowOLEDTaskHandle = osThreadCreate(osThread(ShowOLEDTask), NULL);
 
-  /////////////////////创建 云台 任务，实时任务，/////////////////////////
   /* definition and creation of GimbalTask */
   osThreadDef(GimbalTask, GimbalFun, osPriorityHigh, 0, 128);
   GimbalTaskHandle = osThreadCreate(osThread(GimbalTask), NULL);
 
-   //////////////////////创建 底盘 任务，实时任务，/////////////////////////
   /* definition and creation of ChassisTask */
   osThreadDef(ChassisTask, ChassisFun, osPriorityHigh, 0, 128);
   ChassisTaskHandle = osThreadCreate(osThread(ChassisTask), NULL);
 
-	//////////////////////创建 射击 任务，实时任务，/////////////////////////
   /* definition and creation of ShootTask */
   osThreadDef(ShootTask, ShootFun, osPriorityHigh, 0, 128);
   ShootTaskHandle = osThreadCreate(osThread(ShootTask), NULL);
 
-  ////////////////////创建 失控保护 任务，实时任务，/////////////////////////
   /* definition and creation of OutControl_Task */
   osThreadDef(OutControl_Task, OutControl_Fun, osPriorityAboveNormal, 0, 128);
   OutControl_TaskHandle = osThreadCreate(osThread(OutControl_Task), NULL);
 
-  ////////////////////创建 加载陀螺仪 任务，实时任务，/////////////////////////
   /* definition and creation of IMUTask */
   osThreadDef(IMUTask, IMUFun, osPriorityRealtime, 0, 128);
   IMUTaskHandle = osThreadCreate(osThread(IMUTask), NULL);
@@ -335,6 +335,14 @@ __weak void Get6020SpeedCallback(void const * argument)
   /* USER CODE BEGIN Get6020SpeedCallback */
   
   /* USER CODE END Get6020SpeedCallback */
+}
+
+/* Task_500ms function */
+__weak void Task_500ms(void const * argument)
+{
+  /* USER CODE BEGIN Task_500ms */
+  
+  /* USER CODE END Task_500ms */
 }
 
 /* Private application code --------------------------------------------------*/

@@ -8,6 +8,8 @@
 /**
   * @brief  remote control information
   */
+	
+typedef   signed          char    bool_t;
  
  /* 遥控器通信协议 
    当接收机和发射机建立连接后，接收机会每隔 7ms 通过DBUS发送一帧

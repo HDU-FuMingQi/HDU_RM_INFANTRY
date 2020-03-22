@@ -70,6 +70,44 @@ float Vision_Comps_Yaw   = COMPENSATION_YAW;
 float Vision_Comps_Pitch = COMPENSATION_PITCH;//固定补偿，减小距离的影响
 float Vision_Comps_Pitch_Dist = COMPENSATION_PITCH_DIST;//根据距离补偿
 
+/*******************************视觉误差获取*************************************/
+/**
+  * @brief  获取yaw误差像素(x轴)
+  * @param  误差指针
+  * @retval void
+  * @attention  左上角为0,负数表示目标在中点左边,正数表示在右边
+  */
+void Vision_Error_Yaw(float *error)
+{
+//	if(VisionValue.yaw_angle != 0)
+//	{
+//		//输出为负时云台右移,为正时左移
+//		*error = -(VisionValue.yaw_angle - VISION_MID_YAW);
+//	}
+//	else
+//	{
+//		*error = 0;
+//	}
+}
+
+/**
+  * @brief  获取pitch误差像素(y轴)
+  * @param  误差指针
+  * @retval void
+  * @attention  左上角为0,负数表示目标在中点上方,正数表示在下方
+  */
+void Vision_Error_Pitch(float *error)
+{	
+//	if(VisionValue.pitch_angle != 0)
+//	{
+//		*error = VisionValue.pitch_angle - VISION_MID_PITCH;
+//	}
+//	else
+//	{
+//		*error = 0;
+//	}
+}
+
 /**
   * @brief  获取yaw误差角度，自瞄专用
   * @param  误差指针
@@ -148,6 +186,9 @@ void Vision_Get_Distance(float *distance)
 //视觉是否发了新数据,FALSE没有,TRUE发了新的
 uint8_t Vision_Get_New_Data = FALSE;
 
+//打符是否换装甲了
+uint8_t Vision_Armor = FALSE;
+
 /**
   * @brief  判断视觉数据更新了吗
   * @param  void
@@ -171,5 +212,28 @@ void Vision_Clean_Update_Flag(void)
 }
 
 
+
+
+/**
+  * @brief  判断换装甲板了吗
+  * @param  void
+  * @retval TRUE换了   FALSE没换
+  * @attention  为自动打符做准备,串口空闲中断每触发一次且通过校验,则Vision_Armor置TRUE
+  */
+bool Vision_If_Armor(void)
+{
+	return Vision_Armor;
+}
+
+/**
+  * @brief  换装甲标志位手动置0(false)
+  * @param  void
+  * @retval void
+  * @attention  记得要清零,在哪清零自己选,调用这个函数就行
+  */
+void Vision_Clean_Ammor_Flag(void)
+{
+	Vision_Armor = FALSE;
+}
 
 

@@ -1,4 +1,4 @@
---cpu=Cortex-M4.fp
+--cpu Cortex-M4.fp
 "hdu_rm_ infantry_2020\startup_stm32f427xx.o"
 "hdu_rm_ infantry_2020\mysystem.o"
 "hdu_rm_ infantry_2020\kalman.o"
@@ -45,6 +45,8 @@
 "hdu_rm_ infantry_2020\bsp_vision.o"
 "hdu_rm_ infantry_2020\judge.o"
 "hdu_rm_ infantry_2020\magazine.o"
+"hdu_rm_ infantry_2020\friction.o"
+"hdu_rm_ infantry_2020\super_cap.o"
 "hdu_rm_ infantry_2020\stm32f4xx_hal_adc.o"
 "hdu_rm_ infantry_2020\stm32f4xx_hal_adc_ex.o"
 "hdu_rm_ infantry_2020\stm32f4xx_hal_rcc.o"
@@ -77,6 +79,6 @@
 "hdu_rm_ infantry_2020\port.o"
 "hdu_rm_ infantry_2020\control.o"
 --library_type=microlib --strict --scatter "HDU_RM_ INFANTRY_2020\HDU_RM_ INFANTRY_2020.sct"
---summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "HDU_RM_ INFANTRY_2020.map" -o "HDU_RM_ INFANTRY_2020\HDU_RM_ INFANTRY_2020.axf"

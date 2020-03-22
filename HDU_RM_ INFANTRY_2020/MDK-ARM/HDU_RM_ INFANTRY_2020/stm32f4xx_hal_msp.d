@@ -7,7 +7,7 @@ hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/s
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f427xx.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/CMSIS/Include/core_cm4.h
-hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/CMSIS/Include/cmsis_version.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
@@ -15,7 +15,7 @@ hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
+hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil\ARM\ARMCC\Bin\..\include\stddef.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h
@@ -36,7 +36,7 @@ hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/s
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/kalman.h
-hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/FreeRTOSConfig.h
@@ -61,7 +61,7 @@ hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/bsp_dbus.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/usart.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/bsp_imu.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/mahony_ahrs.h
-hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil5\ARM\ARMCC\Bin\..\include\math.h
+hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil\ARM\ARMCC\Bin\..\include\math.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/tim.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/ICM20602.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/CRC.h
@@ -75,12 +75,14 @@ hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/oledfont.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/bsp_motor.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/myparam.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
-hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdlib.h
-hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil\ARM\ARMCC\Bin\..\include\stdlib.h
+hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: D:\Keil\ARM\ARMCC\Bin\..\include\string.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/shoot_task.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/gimbal_task.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/chassis_task.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/bsp_vision.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/Hero_shoot_Task.h
+hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/friction.h
+hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/super_cap.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ../Inc/magazine.h
 hdu_rm_ infantry_2020\stm32f4xx_hal_msp.o: ..\Peripheral_h\control.h

@@ -1,7 +1,7 @@
 hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/croutine.c
 hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-hdu_rm_ infantry_2020\croutine.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
-hdu_rm_ infantry_2020\croutine.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+hdu_rm_ infantry_2020\croutine.o: D:\Keil\ARM\ARMCC\Bin\..\include\stddef.h
+hdu_rm_ infantry_2020\croutine.o: D:\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 hdu_rm_ infantry_2020\croutine.o: ../Inc/FreeRTOSConfig.h
 hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 hdu_rm_ infantry_2020\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

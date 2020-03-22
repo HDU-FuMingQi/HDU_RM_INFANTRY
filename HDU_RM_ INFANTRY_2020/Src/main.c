@@ -121,14 +121,13 @@ int main(void)
   MX_TIM6_Init();
   MX_UART7_Init();
   MX_USART3_UART_Init();
+  MX_TIM13_Init();
+	
+		
   /* USER CODE BEGIN 2 */
-  SYSTEM_InitPeripheral();//外设初始化
-/////////////////////开启接受裁判系统数据///////////  
-	HAL_UART_Receive_DMA(&huart3,Judge_Buffer,200);
-		HAL_UART_Receive_IT(&huart3,Judge_Buffer,200);
-///////////////超级电容通过CAN控制发送信息但需要在10HZ的定时器中断下发送////////////	
-		HAL_TIM_Base_Start(&htim6);
-		HAL_TIM_Base_Start_IT(&htim6);
+  SYSTEM_InitPeripheral();   //外设初始化
+	Parameter_Init();          //参数初始化
+
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -204,6 +203,15 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+////////////////判断////////////////////
+void Task_500ms(void const * argument)
+{
+	for(;;)
+	{	
+		vTaskDelay(TIME_STAMP_200MS);				//500ms	
+		Send_to_Teammate();
+	}
+}
 
 /* USER CODE END 4 */
 
@@ -223,6 +231,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		set_supercap_current(&hcan1,8000);
 	}
+//////////设置了10ms的TIM13的中断用于摩擦轮处理以及超级电容充放电///////////////////////
+	if (htim->Instance == TIM13) 
+	{
+		FRICTION_Ctrl();//摩擦轮控制	
+		
+		Super_Charging_Control();
+		SuperCap_Giveout_Control();		
+  }
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM1) {
     HAL_IncTick();

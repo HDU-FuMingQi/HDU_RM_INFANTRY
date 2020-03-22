@@ -20,6 +20,16 @@ void SYSTEM_InitPeripheral(void)
 	jy901_uart_init();	//JY901初始化
 	vision_uart_init();	//视觉通信初始化
 	HAL_TIM_PWM_Start(&htim12,TIM_CHANNEL_1);		//蜂鸣器初始化
+	HAL_UART_Receive_DMA(&huart3,Judge_Buffer,200);  ///开启接受裁判系统数据/
+	HAL_UART_Receive_IT(&huart3,Judge_Buffer,200);
+	HAL_TIM_Base_Start(&htim6);       ////超级电容通过CAN控制发送信息但需要在10HZ的定时器中断下发送/
+	HAL_TIM_Base_Start_IT(&htim6);
+	HAL_TIM_Base_Start(&htim13);     /////发射10ms中断启动
+	HAL_TIM_Base_Start_IT(&htim13);
+										//电容电量读取初始化
+										//电容充电控制初始化
+										//电容IO口初始化
+	
 #if (SAFE_MODE==1)
 	while(SystemValue==Starting&&rc.sw1!=1)		//程序刚启动时不能在小陀螺模式
 	{
@@ -47,12 +57,14 @@ void SYSTEM_InitPeripheral(void)
 	TIM12->CCR1=0;
 	ICM20602_Init();
 	
-	
-
-	
-	
 	//SystemValue=Running;	
-	
+}
+
+//参数初始化
+void Parameter_Init(void)
+{
+	CHASSIS_InitArgument();//底盘参数初始化
+	GIMBAL_InitArgument();//云台参数初始化
 }
 
 /**
@@ -113,68 +125,4 @@ void OutControl_Fun(void *pvParameters)
 		set_moto5678_current(&hcan1,0,0,0,0);
 		HAL_GPIO_WritePin(POWER5_GPIO_Port,POWER5_Pin,0); //24V 4
 	}
-}
-
-void LimtValue_f(float* VALUE,float MAX,float MIN)
-{
-	if(*VALUE>MAX)
-		*VALUE=MAX;
-	else if(*VALUE<MIN)
-		*VALUE=MIN;
-}
-
-void LimtValue_u16(uint16_t* VALUE,uint16_t MAX,uint16_t MIN)
-{
-	if(*VALUE>MAX)
-		*VALUE=MAX;
-	else if(*VALUE<MIN)
-		*VALUE=MIN;
-}
-
-void LimtValue_16(int16_t* VALUE,int16_t MAX,int16_t MIN)
-{
-	if(*VALUE>MAX)
-		*VALUE=MAX;
-	else if(*VALUE<MIN)
-		*VALUE=MIN;
-}
-
-/**
-  * @brief  斜坡函数,使目标输出值缓慢等于指针输入值
-  * @param  要在当前输出量上累加的值,目标输出量,递增快慢
-  * @retval 目标输出量
-  * @attention  
-  *             
-*/
-float RampInc_float( float *buffer, float now, float ramp )
-{
-
-		if (*buffer > 0)
-		{
-				if (*buffer > ramp)
-				{  
-						now     += ramp;
-					  *buffer -= ramp;
-				}   
-				else
-				{
-						now     += *buffer;
-					  *buffer  = 0;
-				}
-		}
-		else
-		{
-				if (*buffer < -ramp)
-				{
-						now     += -ramp;
-					  *buffer -= -ramp;
-				}
-				else
-				{
-						now     += *buffer;
-					  *buffer  = 0;
-				}
-		}
-		
-		return now;
 }

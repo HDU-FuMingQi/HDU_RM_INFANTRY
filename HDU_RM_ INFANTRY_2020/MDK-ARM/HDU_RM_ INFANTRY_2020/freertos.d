@@ -1,7 +1,7 @@
 hdu_rm_ infantry_2020\freertos.o: ../Src/freertos.c
 hdu_rm_ infantry_2020\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-hdu_rm_ infantry_2020\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
-hdu_rm_ infantry_2020\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+hdu_rm_ infantry_2020\freertos.o: D:\Keil\ARM\ARMCC\Bin\..\include\stddef.h
+hdu_rm_ infantry_2020\freertos.o: D:\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/FreeRTOSConfig.h
 hdu_rm_ infantry_2020\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 hdu_rm_ infantry_2020\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
@@ -45,7 +45,7 @@ hdu_rm_ infantry_2020\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_
 hdu_rm_ infantry_2020\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 hdu_rm_ infantry_2020\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/kalman.h
-hdu_rm_ infantry_2020\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+hdu_rm_ infantry_2020\freertos.o: D:\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 hdu_rm_ infantry_2020\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 hdu_rm_ infantry_2020\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 hdu_rm_ infantry_2020\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
@@ -61,7 +61,7 @@ hdu_rm_ infantry_2020\freertos.o: ../Inc/bsp_dbus.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/usart.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/bsp_imu.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/mahony_ahrs.h
-hdu_rm_ infantry_2020\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\math.h
+hdu_rm_ infantry_2020\freertos.o: D:\Keil\ARM\ARMCC\Bin\..\include\math.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/tim.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/ICM20602.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/CRC.h
@@ -75,13 +75,15 @@ hdu_rm_ infantry_2020\freertos.o: ../Inc/oledfont.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/bsp_motor.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/myparam.h
 hdu_rm_ infantry_2020\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
-hdu_rm_ infantry_2020\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdlib.h
-hdu_rm_ infantry_2020\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+hdu_rm_ infantry_2020\freertos.o: D:\Keil\ARM\ARMCC\Bin\..\include\stdlib.h
+hdu_rm_ infantry_2020\freertos.o: D:\Keil\ARM\ARMCC\Bin\..\include\string.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/shoot_task.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/gimbal_task.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/chassis_task.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/bsp_vision.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/Hero_shoot_Task.h
+hdu_rm_ infantry_2020\freertos.o: ../Inc/friction.h
+hdu_rm_ infantry_2020\freertos.o: ../Inc/super_cap.h
 hdu_rm_ infantry_2020\freertos.o: ../Inc/magazine.h
 hdu_rm_ infantry_2020\freertos.o: ..\Peripheral_h\control.h
 hdu_rm_ infantry_2020\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h

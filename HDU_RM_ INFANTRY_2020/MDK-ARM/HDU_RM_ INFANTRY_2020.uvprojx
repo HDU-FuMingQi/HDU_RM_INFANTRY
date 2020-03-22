@@ -11,14 +11,13 @@
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060061::V5.06 update 1 (build 61)::ARMCC</pCCUsed>
-      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F427IITx</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32F4xx_DFP.2.13.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IRAM(0x20000000-0x2002FFFF) IRAM2(0x10000000-0x1000FFFF) IROM(0x8000000-0x81FFFFF) CLOCK(25000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
+          <Cpu>IRAM(0x20000000-0x2002FFFF) IRAM2(0x10000000-0x1000FFFF) IROM(0x8000000-0x81FFFFF)  CLOCK(25000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
           <FlashDriverDll></FlashDriverDll>
@@ -134,11 +133,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4107</DriverSelection>
+            <DriverSelection>4103</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -324,20 +323,16 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
-            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
-            <v6Lto>0</v6Lto>
-            <v6WtE>0</v6WtE>
-            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F427xx,USE_HAL_DRIVER,ARM_MATH_CM4,__FPU_PRESENT</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\Peripheral_h</IncludePath>
+              <IncludePath>../Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;   ../Middlewares/Third_Party/FreeRTOS/Source/include;   ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;   ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;   ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;   ../Drivers/CMSIS/Include;   ..\Peripheral_h</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -350,7 +345,6 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -645,6 +639,16 @@
               <FileName>magazine.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\bsp\magazine.c</FilePath>
+            </File>
+            <File>
+              <FileName>friction.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\friction.c</FilePath>
+            </File>
+            <File>
+              <FileName>super_cap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\super_cap.c</FilePath>
             </File>
           </Files>
         </Group>

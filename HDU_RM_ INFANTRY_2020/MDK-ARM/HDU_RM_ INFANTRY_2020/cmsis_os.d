@@ -1,9 +1,9 @@
 hdu_rm_ infantry_2020\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
-hdu_rm_ infantry_2020\cmsis_os.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+hdu_rm_ infantry_2020\cmsis_os.o: D:\Keil\ARM\ARMCC\Bin\..\include\string.h
 hdu_rm_ infantry_2020\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 hdu_rm_ infantry_2020\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-hdu_rm_ infantry_2020\cmsis_os.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
-hdu_rm_ infantry_2020\cmsis_os.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+hdu_rm_ infantry_2020\cmsis_os.o: D:\Keil\ARM\ARMCC\Bin\..\include\stddef.h
+hdu_rm_ infantry_2020\cmsis_os.o: D:\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 hdu_rm_ infantry_2020\cmsis_os.o: ../Inc/FreeRTOSConfig.h
 hdu_rm_ infantry_2020\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 hdu_rm_ infantry_2020\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

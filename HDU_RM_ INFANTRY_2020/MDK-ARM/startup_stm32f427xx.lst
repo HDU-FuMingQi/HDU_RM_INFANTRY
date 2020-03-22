@@ -893,12 +893,12 @@ ARM Macro Assembler    Page 14
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend="hdu_rm_ infantry_2020\startup_stm32f427xx.d" -o"hdu_rm_ infant
-ry_2020\startup_stm32f427xx.o" -I..\\Inc -I..\Inc -I.\RTE\_HDU_RM__INFANTRY_202
-0 -ID:\Keil5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include -ID:\Keil5\ARM\PACK\Keil\ST
-M32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__MIC
-ROLIB SETA 1" --predefine="__UVISION_VERSION SETA 525" --predefine="_RTE_ SETA 
-1" --predefine="STM32F427xx SETA 1" --list=startup_stm32f427xx.lst startup_stm3
-2f427xx.s
+ry_2020\startup_stm32f427xx.o" -I..\\Inc -I..\Inc -I"C:\Users\fumingqi\Desktop\
+HDU_RM_ INFANTRY\HDU_RM_ INFANTRY_2020\MDK-ARM\RTE" -ID:\Keil\ARM\PACK\ARM\CMSI
+S\4.5.0\CMSIS\Include -ID:\Keil\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSI
+S\Device\ST\STM32F4xx\Include --predefine="__MICROLIB SETA 1" --predefine="__UV
+ISION_VERSION SETA 518" --predefine="_RTE_ SETA 1" --predefine="STM32F427xx SET
+A 1" --list=startup_stm32f427xx.lst startup_stm32f427xx.s
 
 
 

@@ -64,6 +64,8 @@ extern "C" {
 #include "bsp_vision.h"
 #include "shoot_task.h"
 #include "Hero_shoot_Task.h"
+#include "friction.h"
+#include "super_cap.h"
 ////////////////µ¯²Ö//////////////
 #include "magazine.h"
 ///////////////Peripheral///////////

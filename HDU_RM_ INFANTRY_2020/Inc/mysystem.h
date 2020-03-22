@@ -55,12 +55,12 @@ extern ControlModeType ControlMode;
 extern EnvironmentModeType EnvironmentMode;
 extern SYSTEMVALUE SystemValue;	//程序状态
 extern uint8_t ISVISIONAUTO;	
+
 void SYSTEM_InitPeripheral(void);
-void LimtValue_f(float* VALUE,float MAX,float MIN);
-void LimtValue_16(int16_t* VALUE,int16_t MAX,int16_t MIN);
-void LimtValue_u16(uint16_t* VALUE,uint16_t MAX,uint16_t MIN);
-//////////斜坡函数,使目标输出值缓慢等于指针输入值///////////////
-float RampInc_float( float *buffer, float now, float ramp );
+void Parameter_Init(void);
+
+
+
 #endif
 
 
